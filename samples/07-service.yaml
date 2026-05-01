@@ -1,0 +1,37 @@
+# =============================================================================
+# 07 - Service (ClusterIP, stable IP/DNS for selecting Pods)
+# =============================================================================
+# spec.selector must match Pod labels. Endpoints (or EndpointSlice) track Pod IPs.
+# type: ClusterIP (default) | NodePort | LoadBalancer | ExternalName
+# =============================================================================
+apiVersion: v1
+kind: Service
+metadata:
+  name: web
+  namespace: demo-app
+  labels:
+    app: web
+  # Optional annotations, e.g. for cloud: service.beta.kubernetes.io/aws-load-balancer-type
+spec:
+  # sessionAffinity: None | ClientIP (sticky sessions to same Pod)
+  sessionAffinity: None
+  # type: ClusterIP exposes only inside the cluster
+  type: ClusterIP
+  # clusterIP: None  # set for "headless" Service (DNS returns pod IPs)
+  # clusterIP: 10.96.x.x  # usually left auto-assigned
+  # Internal traffic policy (kube 1.22+)
+  # internalTrafficPolicy: Cluster
+  # External traffic (NodePort / LoadBalancer)
+  # externalTrafficPolicy: Cluster
+  # ports: mapService port (name optional) to targetPort on Pod
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+      protocol: TCP
+      # appProtocol: used by some mesh/ingress (e.g. http, https, grpc)
+      appProtocol: http
+  # selector: labels on Pods to send traffic to
+  selector:
+    app: web
+# status.loadBalancer.ingress: populated for LoadBalancer/NodePort on some clouds

@@ -1,0 +1,21 @@
+# =============================================================================
+# 10 - PodDisruptionBudget (voluntary evictions: node drain, cluster upgrades)
+# =============================================================================
+# Ensures at least minAvailable (or at most maxUnavailable) pods stay up.
+# Not a substitute for liveness/requests; it only affects *voluntary* disruption.
+# =============================================================================
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: web
+  namespace: demo-app
+  labels:
+    app: web
+spec:
+  # Use minAvailable OR maxUnavailable, not both for the same object
+  minAvailable: 1
+  # maxUnavailable: 25%  # alternative
+  selector:
+    matchLabels:
+      app: web
+  # unhealthyPodEvictionPolicy: IfHealthyBudget (1.27+) for stricter behavior

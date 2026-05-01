@@ -1,0 +1,19 @@
+# Build/apply: kubectl apply -k .
+# Dry-run:   kubectl kustomize .
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - 01-namespace.yaml
+  - 02-resourcequota-limitrange.yaml
+  - 03-configmap-secret.yaml
+  - 04-serviceaccount-rbac.yaml
+  - 05-pod-standalone.yaml
+  - 06-deployment.yaml
+  - 07-service.yaml
+  - 08-ingress.yaml
+  - 09-hpa.yaml
+  - 10-pdb.yaml
+  - 11-networkpolicy.yaml
+  - 12-persistentvolumeclaim.yaml
+# To skip the standalone pod (avoids name clash if you use same app label), remove 05
+# and delete 05 from this list, or do not apply 05.

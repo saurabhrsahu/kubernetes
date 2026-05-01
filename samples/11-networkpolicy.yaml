@@ -1,0 +1,39 @@
+# =============================================================================
+# 11 - NetworkPolicy (requires a CNI that enforces: Calico, Cilium, kindnet+policy, etc.)
+# =============================================================================
+# This example: allow only same-namespace clients to reach port 80. Adjust
+# for your ingress controller namespace if traffic comes from another ns.
+# =============================================================================
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: web-same-namespace
+  namespace: demo-app
+  labels:
+    app: web
+spec:
+  podSelector:
+    matchLabels:
+      app: web
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector: {}
+      ports:
+        - protocol: TCP
+          port: 80
+  egress:
+    - to:
+        - namespaceSelector: {}
+      ports:
+        - protocol: TCP
+          port: 53
+        - protocol: UDP
+          port: 53
+    - to:
+        - namespaceSelector: {}
+      ports:
+        - protocol: TCP
+          port: 443

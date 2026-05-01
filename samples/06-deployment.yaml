@@ -1,0 +1,77 @@
+# =============================================================================
+# 06 - Deployment (recommended for stateless apps)
+# =============================================================================
+# Manages Pod replicas, rolling updates, rollbacks, and pod template.
+# Key fields: spec.replicas, spec.selector, spec.template (Pod spec)
+# =============================================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  namespace: demo-app
+  labels:
+    app.kubernetes.io/name: web
+    app.kubernetes.io/version: "1.0.0"
+spec:
+  # replicas: desired Pod count; HPA can override this
+  replicas: 2
+  # strategy: RollingUpdate (default) or Recreate
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  # selector: must match spec.template.metadata.labels
+  selector:
+    matchLabels:
+      app: web
+  # template: Pod template — same as standalone Pod but without metadata.name
+  template:
+    metadata:
+      labels:
+        app: web
+        app.kubernetes.io/name: web
+    spec:
+      serviceAccountName: web-sa
+      containers:
+        - name: nginx
+          image: nginx:1.25-alpine
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 80
+          env:
+            - name: APP_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: environment
+            - name: API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: api-key
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 3
+            periodSeconds: 5
+      # topologySpreadConstraints / affinity can spread pods across nodes/zones
+  # minReadySeconds: wait before pod counts as available (optional)
+  # progressDeadlineSeconds: time allowed for rollout (optional)
+  # revisionHistoryLimit: old ReplicaSets to keep for rollback
+  revisionHistoryLimit: 10

@@ -1,0 +1,26 @@
+# =============================================================================
+# 12 - PersistentVolumeClaim (storage for StatefulSets or single Pods)
+# =============================================================================
+# StorageClass must exist: kubectl get storageclass
+# A PV may be auto-provisioned (dynamic) or pre-created and bound.
+# This manifest is NOT wired into 06-deployment by default; add a volumeMount
+# in the Pod template if you use it.
+# =============================================================================
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: app-data
+  namespace: demo-app
+  labels:
+    app: web
+spec:
+  # accessModes: ReadWriteOnce | ReadOnlyMany | ReadWriteMany
+  accessModes:
+    - ReadWriteOnce
+  # storageClassName: set to a StorageClass in your cluster, or "" for default
+  # storageClassName: default
+  resources:
+    requests:
+      storage: 1Gi
+  # volumeName: <optional, bind to specific PV by name>
+  # dataSource: snapshot or pvc clone (optional)

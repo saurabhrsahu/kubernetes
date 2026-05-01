@@ -1,0 +1,26 @@
+Full walkthrough (concepts, verify commands, options):
+  See: ../GUIDE.md (in the repo root) — full guide with flow, kubectl commands, and options.
+
+How to use this sample
+----------------------
+From the samples folder:
+
+  kubectl apply -k .
+
+If something fails, apply files in order (01, 02, ...) manually.
+
+Optional / cluster requirements
+---------------------------------
+- 08-ingress: install an ingress controller; set spec.ingressClassName to your IngressClass; add /etc/hosts for web.demo.local or change host.
+- 09-hpa: install metrics-server or remove 09 from kustomization.yaml.
+- 11-networkpolicy: if pods cannot reach the Service or DNS, relax or remove this file (depends on CNI).
+- 12: ensure a StorageClass exists or set storageClassName.
+
+Removing the standalone pod
+---------------------------
+Delete "05-pod-standalone.yaml" from the resources list in kustomization.yaml
+if you do not want the extra demo Pod (Deployment is the main workload).
+
+Cleanup
+-------
+  kubectl delete namespace demo-app

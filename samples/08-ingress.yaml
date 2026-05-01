@@ -1,0 +1,37 @@
+# =============================================================================
+# 08 - Ingress (HTTP/HTTPS into cluster; requires an Ingress controller)
+# =============================================================================
+# Install a controller first, e.g.:
+#   kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/.../deploy.yaml
+# spec.ingressClassName: must match your controller's IngressClass
+# =============================================================================
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: web
+  namespace: demo-app
+  labels:
+    app: web
+  annotations:
+    # Common nginx ingress examples (uncomment to match your controller)
+    # nginx.ingress.kubernetes.io/rewrite-target: /
+    # cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  # ingressClassName: e.g. "nginx" — match `kubectl get ingressclass`
+  ingressClassName: nginx
+  # tls: optional; references a Secret of type kubernetes.io/tls
+  # tls:
+  #   - hosts: [web.example.com]
+  #     secretName: web-tls
+  rules:
+    - host: web.demo.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web
+                port:
+                  name: http
+  # defaultBackend: optional fallback if no rule matches

@@ -1,0 +1,21 @@
+# =============================================================================
+# 01 - Namespace
+# =============================================================================
+# A Namespace scopes names (Pods, Services, etc.) so different teams or apps
+# can use the same resource names without collision.
+# Apply: kubectl apply -f 01-namespace.yaml
+# =============================================================================
+apiVersion: v1
+kind: Namespace
+metadata:
+  # name: unique identifier in the cluster (DNS subdomain rules: lowercase, hyphens)
+  name: demo-app
+  # labels: arbitrary key/value pairs for selection and organization
+  labels:
+    app.kubernetes.io/name: demo-app
+    environment: learning
+  # annotations: non-identifying metadata (tooling, contact info, etc.)
+  annotations:
+    description: "Sample namespace for end-to-end Kubernetes walkthrough"
+# spec: most Namespaces are empty; finalizers and status exist for advanced use
+# spec: {}
