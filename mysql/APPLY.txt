@@ -1,0 +1,38 @@
+Deploy
+------
+  cd mysql
+  kubectl apply -k .
+
+Check
+-----
+  kubectl -n mysql get pods,pvc,svc
+  kubectl -n mysql logs deploy/mysql -f
+
+Connect from your machine (no Ingress needed)
+----------------------------------------------
+  kubectl -n mysql port-forward svc/mysql 3306:3306
+  # Then: mysql -h 127.0.0.1 -P 3306 -u appuser -p appdb
+  # Root: mysql -h 127.0.0.1 -P 3306 -u root -p
+
+In-cluster DSN
+--------------
+  host: mysql.mysql.svc.cluster.local
+  port: 3306
+
+Users and databases (where they are defined)
+--------------------------------------------
+  Credentials and names: secret.yaml → keys mysql-root-password, mysql-database,
+  mysql-user, mysql-password.
+  Wired into the container: deployment.yaml → env MYSQL_ROOT_PASSWORD,
+  MYSQL_DATABASE, MYSQL_USER, MYSQL_PASSWORD from Secret mysql-auth.
+  When it runs: first Pod start with empty PVC — official mysql:8.0 image
+  entrypoint creates the DB and user from those env vars (not from SQL files here).
+
+Before production
+----------------
+  Edit secret.yaml (passwords). Ensure a StorageClass exists (kubectl get sc)
+  or set storageClassName in pvc.yaml.
+
+Remove
+------
+  kubectl delete namespace mysql

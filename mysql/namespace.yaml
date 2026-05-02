@@ -1,0 +1,7 @@
+# Namespace for the MySQL workload (isolated naming and quotas)
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mysql
+  labels:
+    app.kubernetes.io/name: mysql
