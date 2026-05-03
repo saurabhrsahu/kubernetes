@@ -1,0 +1,43 @@
+Deploy
+------
+  cd cassandra
+  kubectl apply -k .
+
+Check
+-----
+  kubectl -n cassandra get statefulset,pods,svc,pvc
+  kubectl -n cassandra logs cassandra-0 -f
+  # First start can take several minutes until probes go Ready.
+
+Connect from your machine
+-------------------------
+  kubectl -n cassandra port-forward svc/cassandra 9042:9042
+  # Then: cqlsh 127.0.0.1 9042
+  # (no password in this sample)
+
+In-cluster CQL
+--------------
+  host: cassandra.cassandra.svc.cluster.local
+  port: 9042
+  # Or pod DNS: cassandra-0.cassandra-headless.cassandra.svc.cluster.local
+
+Why StatefulSet + headless Service
+-----------------------------------
+  Cassandra needs stable pod DNS for seeds. Pod name is cassandra-0; seed
+  FQDN is in configmap.yaml key "seeds". Must stay in sync with Namespace,
+  Service name, and StatefulSet name if you rename anything.
+
+Where settings live
+-------------------
+  Cluster name, DC, rack, snitch, seeds: configmap.yaml → cassandra-config,
+  wired in statefulset.yaml as CASSANDRA_* env vars.
+
+Before production
+----------------
+  Set storageClassName on volumeClaimTemplates in statefulset.yaml if needed.
+  Enable authentication and tune resources; consider a maintained operator
+  for multi-node clusters.
+
+Remove
+------
+  kubectl delete namespace cassandra

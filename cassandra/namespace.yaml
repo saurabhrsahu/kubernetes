@@ -1,0 +1,7 @@
+# Namespace for the Cassandra workload
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cassandra
+  labels:
+    app.kubernetes.io/name: cassandra

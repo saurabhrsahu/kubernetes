@@ -1,0 +1,17 @@
+# Client-facing CQL endpoint (works well for replicas: 1; expand with proper policy for multi-replica).
+apiVersion: v1
+kind: Service
+metadata:
+  name: cassandra
+  namespace: cassandra
+  labels:
+    app.kubernetes.io/name: cassandra
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: cassandra
+  ports:
+    - name: cql
+      port: 9042
+      targetPort: cql
+      protocol: TCP
