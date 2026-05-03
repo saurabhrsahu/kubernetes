@@ -1,0 +1,40 @@
+Deploy
+------
+  cd postgres
+  kubectl apply -k .
+
+Check
+-----
+  kubectl -n postgres get pods,pvc,svc
+  kubectl -n postgres logs deploy/postgres -f
+
+Connect from your machine (no Ingress needed)
+----------------------------------------------
+  kubectl -n postgres port-forward svc/postgres 5432:5432
+  # Then: psql -h 127.0.0.1 -p 5432 -U appuser -d appdb
+  # ( password from secret.yaml key postgres-password )
+
+In-cluster DSN
+--------------
+  host: postgres.postgres.svc.cluster.local
+  port: 5432
+
+Users and databases (where they are defined)
+--------------------------------------------
+  Credentials and names: secret.yaml → keys postgres-user, postgres-password,
+  postgres-database.
+  Wired into the container: deployment.yaml → env POSTGRES_USER,
+  POSTGRES_PASSWORD, POSTGRES_DB from Secret postgres-auth.
+  When it runs: first Pod start with empty PVC — official postgres image
+  creates the superuser role and database from those env vars (not from SQL here).
+  Note: unlike MySQL’s separate root + app user, this image’s POSTGRES_USER is
+  the superuser for the instance.
+
+Before production
+----------------
+  Edit secret.yaml (passwords). Ensure a StorageClass exists (kubectl get sc)
+  or set storageClassName in pvc.yaml.
+
+Remove
+------
+  kubectl delete namespace postgres
