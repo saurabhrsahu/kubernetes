@@ -1,5 +1,7 @@
 # Kubernetes demo setups
 
+This file is **README.md** so GitHub and editors can render it as Markdown (use Markdown preview in Cursor/VS Code if needed).
+
 This repository holds **hands-on, demo-oriented** Kubernetes manifests: a **guided sample app** plus **standalone database stacks** you can apply on a dev cluster. Everything is meant for **learning and local/testing clusters**—change all default passwords before any real environment.
 
 ## Prerequisites
