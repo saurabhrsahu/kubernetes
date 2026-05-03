@@ -1,0 +1,35 @@
+Deploy
+------
+  cd redis
+  kubectl apply -k .
+
+Check
+-----
+  kubectl -n redis get pods,pvc,svc
+  kubectl -n redis logs deploy/redis -f
+
+Connect from your machine
+-------------------------
+  kubectl -n redis port-forward svc/redis 6379:6379
+  # CLI (password from secret.yaml):
+  # redis-cli -h 127.0.0.1 -p 6379 -a changeme-redis ping
+
+In-cluster
+----------
+  host: redis.redis.svc.cluster.local
+  port: 6379
+  # URL: redis://:changeme-redis@redis.redis.svc.cluster.local:6379
+
+Password (where defined)
+-------------------------
+  secret.yaml → redis-password, mounted as env REDIS_PASSWORD; deployment.yaml
+  starts redis-server with --requirepass. REDISCLI_AUTH is the same secret so
+  in-Pod redis-cli probes work without -a.
+
+Before production
+----------------
+  Edit secret.yaml. Set storageClassName in pvc.yaml if needed.
+
+Remove
+------
+  kubectl delete namespace redis
