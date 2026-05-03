@@ -1,0 +1,39 @@
+Deploy
+------
+  cd mongo
+  kubectl apply -k .
+
+Check
+-----
+  kubectl -n mongo get pods,pvc,svc
+  kubectl -n mongo logs deploy/mongo -f
+
+Connect from your machine (no Ingress needed)
+----------------------------------------------
+  kubectl -n mongo port-forward svc/mongo 27017:27017
+  # mongosh (URI; replace password from secret.yaml):
+  # mongosh "mongodb://admin:changeme-admin@127.0.0.1:27017/appdb?authSource=admin"
+
+In-cluster connection string
+-----------------------------
+  host: mongo.mongo.svc.cluster.local
+  port: 27017
+  # mongodb://<mongo-root-username>:<mongo-root-password>@mongo.mongo.svc.cluster.local:27017/appdb?authSource=admin
+
+Root user and database (where they are defined)
+-----------------------------------------------
+  Names and passwords: secret.yaml → mongo-root-username,
+  mongo-root-password, mongo-database.
+  Wired into the container: deployment.yaml → MONGO_INITDB_ROOT_USERNAME,
+  MONGO_INITDB_ROOT_PASSWORD, MONGO_INITDB_DATABASE from Secret mongo-auth.
+  When it runs: first Pod start with empty PVC — mongo image entrypoint
+  enables auth and creates the root user + database (no SQL/JS files in this repo).
+
+Before production
+----------------
+  Edit secret.yaml (passwords). Ensure a StorageClass exists (kubectl get sc)
+  or set storageClassName in pvc.yaml.
+
+Remove
+------
+  kubectl delete namespace mongo

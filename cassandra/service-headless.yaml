@@ -1,0 +1,26 @@
+# Headless service: stable DNS for StatefulSet pods (seeds / peer discovery).
+apiVersion: v1
+kind: Service
+metadata:
+  name: cassandra-headless
+  namespace: cassandra
+  labels:
+    app.kubernetes.io/name: cassandra
+spec:
+  clusterIP: None
+  publishNotReadyAddresses: true
+  selector:
+    app.kubernetes.io/name: cassandra
+  ports:
+    - name: cql
+      port: 9042
+      targetPort: cql
+      protocol: TCP
+    - name: intra-node
+      port: 7000
+      targetPort: intra-node
+      protocol: TCP
+    - name: tls-intra-node
+      port: 7001
+      targetPort: tls-intra-node
+      protocol: TCP

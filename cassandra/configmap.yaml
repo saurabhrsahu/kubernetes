@@ -1,0 +1,16 @@
+# Non-secret cluster settings (wired in statefulset.yaml).
+# Seeds DNS requires: StatefulSet name "cassandra" + headless Service "cassandra-headless".
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cassandra-config
+  namespace: cassandra
+  labels:
+    app.kubernetes.io/name: cassandra
+data:
+  cluster-name: "sample-cluster"
+  snitch: "SimpleSnitch"
+  dc: "dc1"
+  rack: "rack1"
+  # Must match: <sts-name>-0.<headless-svc>.<namespace>.svc.cluster.local
+  seeds: "cassandra-0.cassandra-headless.cassandra.svc.cluster.local"
