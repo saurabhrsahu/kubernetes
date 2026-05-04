@@ -1,0 +1,7 @@
+# Namespace for Prometheus (metrics demo)
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: prometheus
+  labels:
+    app.kubernetes.io/name: prometheus

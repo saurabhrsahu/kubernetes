@@ -24,13 +24,14 @@ This repository holds **hands-on, demo-oriented** Kubernetes manifests: a **guid
 | [**dynamodb/**](dynamodb/) | DynamoDB **Local** (official image): API-compatible dev/test — [dynamodb/APPLY.txt](dynamodb/APPLY.txt) |
 | [**cockroach/**](cockroach/) | CockroachDB single-node (`start-single-node`, insecure demo): SQL + DB Console — [cockroach/APPLY.txt](cockroach/APPLY.txt) |
 | [**influx/**](influx/) | InfluxDB **v2** (`2.8-alpine`): UI + API on 8086, `DOCKER_INFLUXDB_INIT_*` setup — [influx/APPLY.txt](influx/APPLY.txt) |
+| [**prometheus/**](prometheus/) | Prometheus **v2**: ConfigMap + PVC for TSDB, namespace-local Pod RBAC + scrape — [prometheus/APPLY.txt](prometheus/APPLY.txt) |
 
 ## Quick start (each stack)
 
 From the folder you want:
 
 ```bash
-cd samples    # or mysql, mariadb, postgres, mongo, cassandra, redis, dynamodb, cockroach, influx
+cd samples    # or mysql, mariadb, postgres, mongo, cassandra, redis, dynamodb, cockroach, influx, prometheus
 kubectl apply -k .
 ```
 
@@ -50,7 +51,7 @@ kubectl -n mysql get pods
 Tear down a database demo in one shot:
 
 ```bash
-kubectl delete namespace mysql   # or mariadb, postgres, mongo, cassandra, redis, dynamodb, cockroach, influx
+kubectl delete namespace mysql   # or mariadb, postgres, mongo, cassandra, redis, dynamodb, cockroach, influx, prometheus
 ```
 
 For **samples**, delete `namespace demo-app` (see [samples/APPLY.txt](samples/APPLY.txt)).
@@ -64,5 +65,6 @@ For **samples**, delete `namespace demo-app` (see [samples/APPLY.txt](samples/AP
 - **DynamoDB** here is [DynamoDB Local](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.html) in-cluster—not AWS-hosted DynamoDB; use it for API-compatible local testing.
 - **CockroachDB** in `cockroach/` is a **single-node**, **`--insecure`** demo for local learning—use TLS and a supported production topology for real workloads.
 - **InfluxDB** in `influx/` pins **v2** (`influxdb:2.8-alpine`); Docker Hub may move `latest` to **InfluxDB 3**—see [official image tags](https://hub.docker.com/_/influxdb).
+- **Prometheus** in `prometheus/` ships a single replica with **namespace-scoped** discovery (`prometheus` namespace only); extend RBAC/config for full-cluster scraping or use the [Operator](https://prometheus-operator.dev/).
 
 For a full narrative and command reference, start with **[GUIDE.md](GUIDE.md)**.
