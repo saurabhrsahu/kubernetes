@@ -20,13 +20,14 @@ This repository holds **hands-on, demo-oriented** Kubernetes manifests: a **guid
 | [**mongo/**](mongo/) | MongoDB 7: root user + DB via `MONGO_INITDB_*` — [mongo/APPLY.txt](mongo/APPLY.txt) |
 | [**cassandra/**](cassandra/) | Cassandra 5: **StatefulSet** + headless service for seeds, ConfigMap for cluster settings — [cassandra/APPLY.txt](cassandra/APPLY.txt) |
 | [**redis/**](redis/) | Redis 7 (Alpine): password + AOF on PVC — [redis/APPLY.txt](redis/APPLY.txt) |
+| [**dynamodb/**](dynamodb/) | DynamoDB **Local** (official image): API-compatible dev/test — [dynamodb/APPLY.txt](dynamodb/APPLY.txt) |
 
 ## Quick start (each stack)
 
 From the folder you want:
 
 ```bash
-cd samples    # or mysql, postgres, mongo, cassandra, redis
+cd samples    # or mysql, postgres, mongo, cassandra, redis, dynamodb
 kubectl apply -k .
 ```
 
@@ -46,7 +47,7 @@ kubectl -n mysql get pods
 Tear down a database demo in one shot:
 
 ```bash
-kubectl delete namespace mysql   # or postgres, mongo, cassandra, redis
+kubectl delete namespace mysql   # or postgres, mongo, cassandra, redis, dynamodb
 ```
 
 For **samples**, delete `namespace demo-app` (see [samples/APPLY.txt](samples/APPLY.txt)).
@@ -57,5 +58,6 @@ For **samples**, delete `namespace demo-app` (see [samples/APPLY.txt](samples/AP
 - **Ingress, HPA, and NetworkPolicy** in `samples/` need a matching controller, metrics-server, and CNI behavior—see [GUIDE.md](GUIDE.md).
 - **Cassandra** uses a StatefulSet (not a Deployment) so pod DNS and seeds stay stable.
 - **MySQL** defines both a root password and an app user; **Postgres** uses one superuser in this sample; **Mongo** uses init root credentials; **Redis** uses `requirepass`; **Cassandra** ships without CQL auth in this demo.
+- **DynamoDB** here is [DynamoDB Local](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.html) in-cluster—not AWS-hosted DynamoDB; use it for API-compatible local testing.
 
 For a full narrative and command reference, start with **[GUIDE.md](GUIDE.md)**.

@@ -1,0 +1,48 @@
+# DynamoDB Local — same API as DynamoDB for dev/test. Not for production data.
+# Image: https://hub.docker.com/r/amazon/dynamodb-local
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dynamodb
+  namespace: dynamodb
+  labels:
+    app.kubernetes.io/name: dynamodb
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: dynamodb
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: dynamodb
+    spec:
+      containers:
+        - name: dynamodb-local
+          image: amazon/dynamodb-local:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: dynamodb
+              containerPort: 8000
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+          livenessProbe:
+            tcpSocket:
+              port: dynamodb
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+          readinessProbe:
+            tcpSocket:
+              port: dynamodb
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
