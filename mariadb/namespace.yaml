@@ -1,0 +1,7 @@
+# Namespace for the MariaDB workload (isolated naming and quotas)
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mariadb
+  labels:
+    app.kubernetes.io/name: mariadb

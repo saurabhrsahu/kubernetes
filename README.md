@@ -16,6 +16,7 @@ This repository holds **hands-on, demo-oriented** Kubernetes manifests: a **guid
 | [**GUIDE.md**](GUIDE.md) | How to use Kubernetes with this repo: concepts, applying manifests, verifying workloads, optional components |
 | [**samples/**](samples/) | End-to-end **walkthrough**: namespace, quotas, ConfigMap/Secret, RBAC, Pod, Deployment, Service, Ingress, HPA, PDB, NetworkPolicy, PVC—with comments in YAML |
 | [**mysql/**](mysql/) | MySQL 8: Namespace, Secret, PVC, Deployment, Service (`kubectl apply -k .`) — see [mysql/APPLY.txt](mysql/APPLY.txt) |
+| [**mariadb/**](mariadb/) | MariaDB LTS: same pattern as MySQL; `MARIADB_*` env from Secret — [mariadb/APPLY.txt](mariadb/APPLY.txt) |
 | [**postgres/**](postgres/) | PostgreSQL 16 (Alpine): same pattern — [postgres/APPLY.txt](postgres/APPLY.txt) |
 | [**mongo/**](mongo/) | MongoDB 7: root user + DB via `MONGO_INITDB_*` — [mongo/APPLY.txt](mongo/APPLY.txt) |
 | [**cassandra/**](cassandra/) | Cassandra 5: **StatefulSet** + headless service for seeds, ConfigMap for cluster settings — [cassandra/APPLY.txt](cassandra/APPLY.txt) |
@@ -27,7 +28,7 @@ This repository holds **hands-on, demo-oriented** Kubernetes manifests: a **guid
 From the folder you want:
 
 ```bash
-cd samples    # or mysql, postgres, mongo, cassandra, redis, dynamodb
+cd samples    # or mysql, mariadb, postgres, mongo, cassandra, redis, dynamodb
 kubectl apply -k .
 ```
 
@@ -47,7 +48,7 @@ kubectl -n mysql get pods
 Tear down a database demo in one shot:
 
 ```bash
-kubectl delete namespace mysql   # or postgres, mongo, cassandra, redis, dynamodb
+kubectl delete namespace mysql   # or mariadb, postgres, mongo, cassandra, redis, dynamodb
 ```
 
 For **samples**, delete `namespace demo-app` (see [samples/APPLY.txt](samples/APPLY.txt)).
@@ -57,7 +58,7 @@ For **samples**, delete `namespace demo-app` (see [samples/APPLY.txt](samples/AP
 - **Secrets** in this repo use placeholder values. Treat them as **examples only**.
 - **Ingress, HPA, and NetworkPolicy** in `samples/` need a matching controller, metrics-server, and CNI behavior—see [GUIDE.md](GUIDE.md).
 - **Cassandra** uses a StatefulSet (not a Deployment) so pod DNS and seeds stay stable.
-- **MySQL** defines both a root password and an app user; **Postgres** uses one superuser in this sample; **Mongo** uses init root credentials; **Redis** uses `requirepass`; **Cassandra** ships without CQL auth in this demo.
+- **MySQL** and **MariaDB** define root plus an app user/database via image env vars (different Secret keys / env prefixes; MariaDB uses `MARIADB_*`); **Postgres** uses one superuser in this sample; **Mongo** uses init root credentials; **Redis** uses `requirepass`; **Cassandra** ships without CQL auth in this demo.
 - **DynamoDB** here is [DynamoDB Local](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.html) in-cluster—not AWS-hosted DynamoDB; use it for API-compatible local testing.
 
 For a full narrative and command reference, start with **[GUIDE.md](GUIDE.md)**.

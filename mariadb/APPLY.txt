@@ -1,0 +1,39 @@
+Deploy
+------
+  cd mariadb
+  kubectl apply -k .
+
+Check
+-----
+  kubectl -n mariadb get pods,pvc,svc
+  kubectl -n mariadb logs deploy/mariadb -f
+
+Connect from your machine (no Ingress needed)
+----------------------------------------------
+  kubectl -n mariadb port-forward svc/mariadb 3306:3306
+  # Then: mariadb -h 127.0.0.1 -P 3306 -u appuser -p appdb
+  # Or mysql client: mysql -h 127.0.0.1 -P 3306 -u appuser -p appdb
+  # Root: mariadb -h 127.0.0.1 -P 3306 -u root -p
+
+In-cluster DSN
+--------------
+  host: mariadb.mariadb.svc.cluster.local
+  port: 3306
+
+Users and databases (where they are defined)
+--------------------------------------------
+  Credentials and names: secret.yaml → keys mariadb-root-password,
+  mariadb-database, mariadb-user, mariadb-password.
+  Wired into the container: deployment.yaml → env MARIADB_ROOT_PASSWORD,
+  MARIADB_DATABASE, MARIADB_USER, MARIADB_PASSWORD from Secret mariadb-auth.
+  When it runs: first Pod start with empty PVC — official mariadb:lts image
+  entrypoint creates the DB and user from those env vars (not from SQL files here).
+
+Before production
+----------------
+  Edit secret.yaml (passwords). Ensure a StorageClass exists (kubectl get sc)
+  or set storageClassName in pvc.yaml.
+
+Remove
+------
+  kubectl delete namespace mariadb
