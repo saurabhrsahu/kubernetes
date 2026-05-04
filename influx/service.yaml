@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: influx
+  namespace: influx
+  labels:
+    app.kubernetes.io/name: influx
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: influx
+  ports:
+    - name: http
+      port: 8086
+      targetPort: http
+      protocol: TCP
