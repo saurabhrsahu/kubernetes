@@ -1,0 +1,7 @@
+# Namespace for the CockroachDB single-node demo workload
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cockroach
+  labels:
+    app.kubernetes.io/name: cockroach
