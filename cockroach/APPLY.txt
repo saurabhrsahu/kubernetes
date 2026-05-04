@@ -1,0 +1,40 @@
+Deploy
+------
+  cd cockroach
+  kubectl apply -k .
+
+Check
+-----
+  kubectl -n cockroach get pods,pvc,svc
+  kubectl -n cockroach logs deploy/cockroach -f
+
+Connect from your machine
+-------------------------
+  kubectl -n cockroach port-forward svc/cockroach 26257:26257 8080:8080
+  # SQL (insecure — demo only):
+  # cockroach sql --url='postgresql://root@127.0.0.1:26257/defaultdb?sslmode=disable'
+  # Or with app user/password from secret.yaml (defaults shown):
+  # cockroach sql --url='postgresql://appuser:changeme-app@127.0.0.1:26257/appdb?sslmode=disable'
+  # DB Console: http://127.0.0.1:8080
+
+In-cluster DSN (Postgres wire protocol)
+-----------------------------------------
+  host: cockroach.cockroach.svc.cluster.local
+  sql port: 26257
+  Example: postgresql://root@cockroach.cockroach.svc.cluster.local:26257/defaultdb?sslmode=disable
+
+Bootstrap user / database (where defined)
+-------------------------------------------
+  secret.yaml → cockroach-database, cockroach-user, cockroach-password emitted as
+  COCKROACH_* env vars. The official image applies them only when
+  /cockroach/cockroach-data is empty on first start.
+
+Before production
+----------------
+  Do not use --insecure outside local/testing clusters. Use TLS, proper RBAC,
+  and either CockroachDB Cloud or a production topology (multi-node + operator).
+  Edit secret.yaml; set storageClassName in pvc.yaml if needed.
+
+Remove
+------
+  kubectl delete namespace cockroach

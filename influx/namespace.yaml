@@ -1,0 +1,7 @@
+# Namespace for the InfluxDB v2 workload (time-series demo)
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: influx
+  labels:
+    app.kubernetes.io/name: influx

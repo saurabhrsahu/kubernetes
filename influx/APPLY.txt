@@ -1,0 +1,38 @@
+Deploy
+------
+  cd influx
+  kubectl apply -k .
+
+Check
+-----
+  kubectl -n influx get pods,pvc,svc
+  kubectl -n influx logs deploy/influx -f
+
+Connect from your machine
+-------------------------
+  kubectl -n influx port-forward svc/influx 8086:8086
+  # UI: http://127.0.0.1:8086 — login with influx-username / influx-password from secret.yaml
+  # CLI (install influx locally): influx config create ... host http://127.0.0.1:8086 --token <admin-token>
+
+In-cluster URL
+--------------
+  http://influx.influx.svc.cluster.local:8086
+
+Setup env / token (where defined)
+---------------------------------
+  secret.yaml → wired as DOCKER_INFLUXDB_INIT_* in deployment.yaml.
+  Runs once when /var/lib/influxdb2 is empty; changing the Secret later does not
+  rotate credentials unless you wipe the PVC.
+
+Notes
+-----
+  This stack pins **InfluxDB v2** (`influxdb:2.8-alpine`). For InfluxDB 3 Core,
+  use a different image/command layout — see Docker Hub `influxdb:3-core`.
+
+Before production
+----------------
+  Edit secret.yaml (passwords and admin token). Set storageClassName in pvc.yaml if needed.
+
+Remove
+------
+  kubectl delete namespace influx

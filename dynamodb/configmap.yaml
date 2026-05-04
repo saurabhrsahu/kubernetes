@@ -1,0 +1,12 @@
+# In-cluster apps: point the AWS SDK at this endpoint (no TLS; dev/test only).
+# AWS SDKs v2: AWS_ENDPOINT_URL / boto3: endpoint_url
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dynamodb-endpoint
+  namespace: dynamodb
+  labels:
+    app.kubernetes.io/name: dynamodb
+data:
+  endpoint-url: "http://dynamodb.dynamodb.svc.cluster.local:8000"
+  region: "us-east-1"

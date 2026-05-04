@@ -1,0 +1,46 @@
+Deploy
+------
+  cd prometheus
+  kubectl apply -k .
+
+Check
+-----
+  kubectl -n prometheus get pods,pvc,svc,cm,sa,role,rolebinding
+  kubectl -n prometheus logs deploy/prometheus -f
+
+UI / API from your machine
+--------------------------
+  kubectl -n prometheus port-forward svc/prometheus 9090:9090
+  # Prometheus UI: http://127.0.0.1:9090
+
+In-cluster
+----------
+  http://prometheus.prometheus.svc.cluster.local:9090
+
+Config / scrape targets
+-----------------------
+  configmap.yaml → Prometheus mounts prometheus.yml only; TSDB on PVC prometheus-data.
+  Default targets: this Prometheus server (`localhost:9090`).
+  Optional Pod scraping **within namespace prometheus**: annotate Pod templates:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "9090"
+    prometheus.io/path: "/metrics"   # optional
+
+  RBAC: Role `prometheus` grants **pod list/watch/get** in namespace prometheus only.
+  Cluster-wide discovery requires ClusterRole changes — see APPLY notes below.
+
+Reload config (no rollout)
+--------------------------
+  # From prometheus/ after editing configmap.yaml:
+  kubectl apply -k .
+  kubectl -n prometheus port-forward svc/prometheus 9090:9090
+  curl -X POST http://127.0.0.1:9090/-/reload
+
+Before production
+----------------
+  Pin image tag if you upgrade; tune PVC size and resources; use Prometheus Operator,
+  remote_write, auth/TLS, and appropriate RBAC for full-cluster scraping.
+
+Remove
+------
+  kubectl delete namespace prometheus

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: influx-data
+  namespace: influx
+  labels:
+    app.kubernetes.io/name: influx
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  # Uncomment and set if your cluster has no default StorageClass:
+  # storageClassName: standard

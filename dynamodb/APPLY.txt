@@ -1,0 +1,34 @@
+Deploy
+------
+  cd dynamodb
+  kubectl apply -k .
+
+Check
+-----
+  kubectl -n dynamodb get pods,svc,cm
+  kubectl -n dynamodb logs deploy/dynamodb -f
+
+Connect from your machine
+-------------------------
+  kubectl -n dynamodb port-forward svc/dynamodb 8000:8000
+  # AWS CLI (dummy creds; Local accepts any for dev):
+  # aws dynamodb list-tables --endpoint-url http://127.0.0.1:8000
+
+In-cluster
+----------
+  DNS: dynamodb.dynamodb.svc.cluster.local
+  Port: 8000
+  ConfigMap dynamodb-endpoint has endpoint-url and region for SDK env wiring.
+
+SDK notes
+---------
+  DynamoDB Local does not use real IAM. Use any Access key format allowed by
+  your SDK version (see AWS docs for DynamoDB Local credential quirks).
+
+Before production
+----------------
+  This stack is for learning/dev. Use AWS DynamoDB in real environments.
+
+Remove
+------
+  kubectl delete namespace dynamodb
