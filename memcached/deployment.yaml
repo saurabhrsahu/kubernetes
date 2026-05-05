@@ -1,0 +1,52 @@
+# Official image: https://hub.docker.com/_/memcached — in-memory only (no PVC in this demo).
+# -m sets cache size in MiB; keep below Pod memory limit overhead.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: memcached
+  namespace: memcached
+  labels:
+    app.kubernetes.io/name: memcached
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: memcached
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: memcached
+    spec:
+      containers:
+        - name: memcached
+          image: memcached:1.6-alpine
+          imagePullPolicy: IfNotPresent
+          command:
+            - memcached
+            - -m
+            - "128"
+          ports:
+            - name: memcache
+              containerPort: 11211
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 192Mi
+            limits:
+              cpu: "1"
+              memory: 512Mi
+          livenessProbe:
+            tcpSocket:
+              port: memcache
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+          readinessProbe:
+            tcpSocket:
+              port: memcache
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
