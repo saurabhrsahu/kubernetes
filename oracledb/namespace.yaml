@@ -1,0 +1,7 @@
+# Namespace for Oracle Database Free demo workload
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: oracledb
+  labels:
+    app.kubernetes.io/name: oracledb

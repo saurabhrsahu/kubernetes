@@ -1,0 +1,47 @@
+Deploy
+------
+  cd oracledb
+  kubectl apply -k .
+
+Check
+-----
+  kubectl -n oracledb get pods,pvc,svc
+  kubectl -n oracledb logs deploy/oracledb -f
+
+  First startup with an empty PVC can take several minutes (database creation).
+  Wait until the Pod is Ready (startupProbe uses healthcheck.sh).
+
+Connect from your machine
+-------------------------
+  kubectl -n oracledb port-forward svc/oracledb 1521:1521
+
+  # Easy connect string (PDB): FREEPDB1 — SYS/SYSTEM password from secret.yaml (oracle-password)
+  # sqlplus system/<oracle-password>@//127.0.0.1:1521/FREEPDB1
+
+  # App user from secret: APP_USER / APP_USER_PASSWORD → schema in FREEPDB1
+  # jdbc:oracle:thin:@//127.0.0.1:1521/FREEPDB1
+
+In-cluster
+----------
+  host: oracledb.oracledb.svc.cluster.local
+  port: 1521
+  service name / PDB: FREEPDB1
+
+Secrets / users (where defined)
+-------------------------------
+  secret.yaml → ORACLE_PASSWORD (SYS/SYSTEM), APP_USER, APP_USER_PASSWORD.
+  Wired in deployment.yaml; applied only when /opt/oracle/oradata is uninitialized.
+
+Image / licensing note
+---------------------
+  This stack uses **gvenzl/oracle-free** on Docker Hub (Oracle Database Free).
+  You are responsible for complying with Oracle license terms for your use case.
+
+Before production
+----------------
+  Change passwords; size PVC and memory for workload; use supported Oracle
+  deployment patterns (official containers, cloud, or enterprise installs).
+
+Remove
+------
+  kubectl delete namespace oracledb

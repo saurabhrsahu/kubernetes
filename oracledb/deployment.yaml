@@ -1,0 +1,80 @@
+# Oracle Database Free via gvenzl/oracle-free (community image). Dev/test only; respect Oracle licensing.
+# Data dir: https://hub.docker.com/r/gvenzl/oracle-free — persist /opt/oracle/oradata
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oracledb
+  namespace: oracledb
+  labels:
+    app.kubernetes.io/name: oracledb
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: oracledb
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: oracledb
+    spec:
+      containers:
+        - name: oracle
+          image: gvenzl/oracle-free:23-slim
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: listener
+              containerPort: 1521
+              protocol: TCP
+          env:
+            - name: ORACLE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: oracle-auth
+                  key: oracle-password
+            - name: APP_USER
+              valueFrom:
+                secretKeyRef:
+                  name: oracle-auth
+                  key: app-user
+            - name: APP_USER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: oracle-auth
+                  key: app-user-password
+          volumeMounts:
+            - name: oradata
+              mountPath: /opt/oracle/oradata
+          resources:
+            requests:
+              cpu: 500m
+              memory: 2Gi
+            limits:
+              cpu: "2"
+              memory: 4Gi
+          # First-time DB creation can take many minutes; startupProbe gates liveness/readiness.
+          startupProbe:
+            exec:
+              command:
+                - healthcheck.sh
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 80
+          readinessProbe:
+            exec:
+              command:
+                - healthcheck.sh
+            periodSeconds: 15
+            timeoutSeconds: 5
+          livenessProbe:
+            exec:
+              command:
+                - healthcheck.sh
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 6
+      volumes:
+        - name: oradata
+          persistentVolumeClaim:
+            claimName: oracle-oradata
