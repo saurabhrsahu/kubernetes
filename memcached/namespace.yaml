@@ -1,0 +1,7 @@
+# Namespace for the Memcached workload (in-memory cache demo)
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: memcached
+  labels:
+    app.kubernetes.io/name: memcached

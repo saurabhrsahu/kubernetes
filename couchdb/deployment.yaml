@@ -1,0 +1,70 @@
+# Official image: https://hub.docker.com/_/couchdb — COUCHDB_USER / COUCHDB_PASSWORD → admin user.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: couchdb
+  namespace: couchdb
+  labels:
+    app.kubernetes.io/name: couchdb
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: couchdb
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: couchdb
+    spec:
+      securityContext:
+        fsGroup: 5984
+      containers:
+        - name: couchdb
+          image: couchdb:3.5.1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 5984
+              protocol: TCP
+          env:
+            - name: COUCHDB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: couch-auth
+                  key: couch-user
+            - name: COUCHDB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: couch-auth
+                  key: couch-password
+          volumeMounts:
+            - name: data
+              mountPath: /opt/couchdb/data
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /_up
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 12
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: couch-data

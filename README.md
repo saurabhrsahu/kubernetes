@@ -25,13 +25,16 @@ This repository holds **hands-on, demo-oriented** Kubernetes manifests: a **guid
 | [**cockroach/**](cockroach/) | CockroachDB single-node (`start-single-node`, insecure demo): SQL + DB Console — [cockroach/APPLY.txt](cockroach/APPLY.txt) |
 | [**influx/**](influx/) | InfluxDB **v2** (`2.8-alpine`): UI + API on 8086, `DOCKER_INFLUXDB_INIT_*` setup — [influx/APPLY.txt](influx/APPLY.txt) |
 | [**prometheus/**](prometheus/) | Prometheus **v2**: ConfigMap + PVC for TSDB, namespace-local Pod RBAC + scrape — [prometheus/APPLY.txt](prometheus/APPLY.txt) |
+| [**oracledb/**](oracledb/) | Oracle Database **Free** (`gvenzl/oracle-free`): listener 1521, PDB **FREEPDB1** — [oracledb/APPLY.txt](oracledb/APPLY.txt) |
+| [**couchdb/**](couchdb/) | Apache CouchDB **3** (official image): HTTP API + Fauxton on **5984**, admin via env — [couchdb/APPLY.txt](couchdb/APPLY.txt) |
+| [**memcached/**](memcached/) | Memcached **1.6** (Alpine): text/binary protocol on **11211**, no PVC / no auth in demo — [memcached/APPLY.txt](memcached/APPLY.txt) |
 
 ## Quick start (each stack)
 
 From the folder you want:
 
 ```bash
-cd samples    # or mysql, mariadb, postgres, mongo, cassandra, redis, dynamodb, cockroach, influx, prometheus
+cd samples    # or mysql, mariadb, postgres, mongo, cassandra, redis, dynamodb, cockroach, influx, prometheus, oracledb, couchdb, memcached
 kubectl apply -k .
 ```
 
@@ -51,7 +54,7 @@ kubectl -n mysql get pods
 Tear down a database demo in one shot:
 
 ```bash
-kubectl delete namespace mysql   # or mariadb, postgres, mongo, cassandra, redis, dynamodb, cockroach, influx, prometheus
+kubectl delete namespace mysql   # or mariadb, postgres, mongo, cassandra, redis, dynamodb, cockroach, influx, prometheus, oracledb, couchdb, memcached
 ```
 
 For **samples**, delete `namespace demo-app` (see [samples/APPLY.txt](samples/APPLY.txt)).
@@ -66,5 +69,8 @@ For **samples**, delete `namespace demo-app` (see [samples/APPLY.txt](samples/AP
 - **CockroachDB** in `cockroach/` is a **single-node**, **`--insecure`** demo for local learning—use TLS and a supported production topology for real workloads.
 - **InfluxDB** in `influx/` pins **v2** (`influxdb:2.8-alpine`); Docker Hub may move `latest` to **InfluxDB 3**—see [official image tags](https://hub.docker.com/_/influxdb).
 - **Prometheus** in `prometheus/` ships a single replica with **namespace-scoped** discovery (`prometheus` namespace only); extend RBAC/config for full-cluster scraping or use the [Operator](https://prometheus-operator.dev/).
+- **OracleDB** in `oracledb/` uses the community **[gvenzl/oracle-free](https://hub.docker.com/r/gvenzl/oracle-free)** image (Oracle Database Free); it is **heavy** on first boot and memory—see [oracledb/APPLY.txt](oracledb/APPLY.txt) and Oracle’s license terms.
+- **CouchDB** in `couchdb/` is single-node; complete the **single-node** setup in [Fauxton](https://docs.couchdb.org/en/stable/install/setup.html#single-node-setup) (`/_utils`) once per fresh volume so system databases exist.
+- **Memcached** in `memcached/` is **ephemeral** and **unauthenticated** in this sample—like a default Redis without TLS/password hardening.
 
 For a full narrative and command reference, start with **[GUIDE.md](GUIDE.md)**.

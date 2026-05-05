@@ -1,0 +1,34 @@
+Deploy
+------
+  cd memcached
+  kubectl apply -k .
+
+Check
+-----
+  kubectl -n memcached get pods,svc
+  kubectl -n memcached logs deploy/memcached -f
+
+Connect from your machine
+-------------------------
+  kubectl -n memcached port-forward svc/memcached 11211:11211
+  # Example (requires telnet or nc): stats settings / quit — binary/text MEMCACHE protocol
+
+In-cluster
+----------
+  host: memcached.memcached.svc.cluster.local
+  port: 11211
+
+Notes
+-----
+  No PVC — Memcached is volatile; data is lost when the Pod restarts.
+  This demo has **no authentication** (default binary protocol). Use SASL/TLS,
+  NetworkPolicies, or sidecars for real environments — see Memcached docs.
+
+Tune cache size
+---------------
+  deployment.yaml → `memcached -m <MiB>` must fit comfortably under the Pod
+  memory limit.
+
+Remove
+------
+  kubectl delete namespace memcached
