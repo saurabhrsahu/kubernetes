@@ -1,0 +1,39 @@
+Deploy
+------
+  cd couchdb
+  kubectl apply -k .
+
+Check
+-----
+  kubectl -n couchdb get pods,pvc,svc
+  kubectl -n couchdb logs deploy/couchdb -f
+
+Connect from your machine
+-------------------------
+  kubectl -n couchdb port-forward svc/couchdb 5984:5984
+  # HTTP API: http://127.0.0.1:5984/
+  # Fauxton UI: http://127.0.0.1:5984/_utils
+
+  Auth: Basic — user/password from secret.yaml (couch-user / couch-password).
+
+In-cluster
+----------
+  Base URL: http://couchdb.couchdb.svc.cluster.local:5984/
+
+Credentials (where defined)
+---------------------------
+  secret.yaml → COUCHDB_USER / COUCHDB_PASSWORD in deployment.yaml.
+
+Single-node setup
+-----------------
+  New CouchDB versions may prompt for **single-node** cluster setup in Fauxton
+  (`/_utils`) so system DBs (`_users`, `_replicator`, `_global_changes`) exist.
+  Complete that wizard once per fresh data volume.
+
+Before production
+----------------
+  Change passwords; tighten network exposure; see CouchDB security docs.
+
+Remove
+------
+  kubectl delete namespace couchdb
