@@ -29,6 +29,8 @@ This repository holds **hands-on, demo-oriented** Kubernetes manifests: a **guid
 | [**couchdb/**](couchdb/) | Apache CouchDB **3** (official image): HTTP API + Fauxton on **5984**, admin via env — [couchdb/APPLY.txt](couchdb/APPLY.txt) |
 | [**memcached/**](memcached/) | Memcached **1.6** (Alpine): text/binary protocol on **11211**, no PVC / no auth in demo — [memcached/APPLY.txt](memcached/APPLY.txt) |
 | [**kafka/**](kafka/) | Apache Kafka **3.9** (KRaft, single broker): **9092** in-cluster, **9094** via port-forward — [kafka/APPLY.txt](kafka/APPLY.txt) |
+| [**rabbitmq/**](rabbitmq/) | RabbitMQ **3.13** (management): AMQP **5672**, UI **15672**, PVC — [rabbitmq/APPLY.txt](rabbitmq/APPLY.txt) |
+
 
 ## Quick start (each stack)
 

@@ -1,0 +1,39 @@
+Deploy
+------
+  cd rabbitmq
+  kubectl apply -k .
+
+Check
+-----
+  kubectl -n rabbitmq get pods,pvc,svc
+  kubectl -n rabbitmq logs deploy/rabbitmq -f
+
+Connect from your machine
+-------------------------
+  kubectl -n rabbitmq port-forward svc/rabbitmq 5672:5672 15672:15672
+  # Management UI: http://127.0.0.1:15672 — user/password from secret.yaml
+  # AMQP URL: amqp://admin:changeme-admin@127.0.0.1:5672/
+
+In-cluster
+----------
+  AMQP host: rabbitmq.rabbitmq.svc.cluster.local
+  AMQP port: 5672
+  Management HTTP: http://rabbitmq.rabbitmq.svc.cluster.local:15672
+
+Credentials (where defined)
+---------------------------
+  secret.yaml → RABBITMQ_DEFAULT_USER / RABBITMQ_DEFAULT_PASS in deployment.yaml.
+
+Notes
+-----
+  Pod hostname is fixed to `rabbitmq` so Mnesia data on the PVC stays tied to
+  node name rabbit@rabbitmq across restarts. Single-node demo — not a cluster.
+
+Before production
+----------------
+  Change passwords; enable TLS; use RabbitMQ Cluster Operator or StatefulSet
+  clustering for HA.
+
+Remove
+------
+  kubectl delete namespace rabbitmq
