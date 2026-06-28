@@ -1,0 +1,41 @@
+Deploy
+------
+  cd kafka
+  kubectl apply -k .
+
+Check
+-----
+  kubectl -n kafka get pods,pvc,svc
+  kubectl -n kafka logs deploy/kafka -f
+
+  First start can take 1–2 minutes (KRaft format + broker startup).
+
+In-cluster bootstrap
+--------------------
+  kafka.kafka.svc.cluster.local:9092
+
+From your machine (port-forward)
+--------------------------------
+  kubectl -n kafka port-forward svc/kafka 9094:9094
+  # Use bootstrap server localhost:9094 (PLAINTEXT_HOST listener)
+
+Quick test (inside the Pod)
+---------------------------
+  kubectl -n kafka exec -it deploy/kafka -- bash
+  cd /opt/kafka/bin
+  ./kafka-topics.sh --bootstrap-server localhost:9092 --create --topic demo --if-not-exists
+  ./kafka-console-producer.sh --bootstrap-server localhost:9092 --topic demo
+  ./kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic demo --from-beginning
+
+Architecture (this demo)
+------------------------
+  Single broker, KRaft combined mode (broker + controller), no ZooKeeper.
+  PLAINTEXT only — not for production. Replication factor 1 on internal topics.
+
+Before production
+----------------
+  Use multiple brokers, TLS/SASL, and an operator or Strimzi; size PVC and JVM heap.
+
+Remove
+------
+  kubectl delete namespace kafka
