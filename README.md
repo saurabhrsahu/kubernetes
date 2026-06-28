@@ -31,12 +31,13 @@ This repository holds **hands-on, demo-oriented** Kubernetes manifests: a **guid
 | [**kafka/**](kafka/) | Apache Kafka **3.9** (KRaft, single broker): **9092** in-cluster, **9094** via port-forward — [kafka/APPLY.txt](kafka/APPLY.txt) |
 | [**rabbitmq/**](rabbitmq/) | RabbitMQ **3.13** (management): AMQP **5672**, UI **15672**, PVC — [rabbitmq/APPLY.txt](rabbitmq/APPLY.txt) |
 
+
 ## Quick start (each stack)
 
 From the folder you want:
 
 ```bash
-cd samples    # or mysql, mariadb, postgres, mongo, cassandra, redis, dynamodb, cockroach, influx, prometheus, oracledb, couchdb, memcached, kafka, rabbitmq
+cd samples    # or mysql, mariadb, postgres, mongo, cassandra, redis, dynamodb, cockroach, influx, prometheus, oracledb, couchdb, memcached, kafka
 kubectl apply -k .
 ```
 
@@ -56,7 +57,7 @@ kubectl -n mysql get pods
 Tear down a database demo in one shot:
 
 ```bash
-kubectl delete namespace mysql   # or mariadb, postgres, mongo, cassandra, redis, dynamodb, cockroach, influx, prometheus, oracledb, couchdb, memcached, kafka, rabbitmq
+kubectl delete namespace mysql   # or mariadb, postgres, mongo, cassandra, redis, dynamodb, cockroach, influx, prometheus, oracledb, couchdb, memcached, kafka
 ```
 
 For **samples**, delete `namespace demo-app` (see [samples/APPLY.txt](samples/APPLY.txt)).
@@ -74,7 +75,6 @@ For **samples**, delete `namespace demo-app` (see [samples/APPLY.txt](samples/AP
 - **OracleDB** in `oracledb/` uses the community **[gvenzl/oracle-free](https://hub.docker.com/r/gvenzl/oracle-free)** image (Oracle Database Free); it is **heavy** on first boot and memory—see [oracledb/APPLY.txt](oracledb/APPLY.txt) and Oracle’s license terms.
 - **CouchDB** in `couchdb/` is single-node; complete the **single-node** setup in [Fauxton](https://docs.couchdb.org/en/stable/install/setup.html#single-node-setup) (`/_utils`) once per fresh volume so system databases exist.
 - **Memcached** in `memcached/` is **ephemeral** and **unauthenticated** in this sample—like a default Redis without TLS/password hardening.
-- **Kafka** in `kafka/` is single-broker KRaft (PLAINTEXT); use **9092** in-cluster or port-forward **9094** locally.
-- **RabbitMQ** in `rabbitmq/` is a **single-node** broker with the **management** plugin; fixed Pod hostname keeps Mnesia data stable on the PVC.
+- **Kafka** in `kafka/` is a **single-broker KRaft** stack (`apache/kafka:3.9.0`, PLAINTEXT); use **9092** in-cluster or port-forward **9094** for local clients—see [kafka/APPLY.txt](kafka/APPLY.txt).
 
 For a full narrative and command reference, start with **[GUIDE.md](GUIDE.md)**.
