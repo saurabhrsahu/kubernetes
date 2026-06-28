@@ -1,0 +1,7 @@
+# Namespace for RabbitMQ (AMQP message broker demo)
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: rabbitmq
+  labels:
+    app.kubernetes.io/name: rabbitmq
